@@ -4,19 +4,8 @@ from torch import nn, vmap
 from torch.func import jacrev, hessian
 import torch.optim as optim
 
-class U(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.seq = nn.Sequential(
-            nn.Linear(2, 10,),
-            nn.Tanh(),
-            nn.Linear(10,5),
-            nn.Tanh(),
-            nn.Linear(5, 1)
-        )
+from wave.u import U
 
-    def forward(self, tx):
-        return self.seq(tx).squeeze()
 
 def compute_residual(u, tx):
     hess = vmap(hessian(u))(tx)
@@ -28,9 +17,8 @@ def compute_residual(u, tx):
 
     return residual
 
-t = torch.linspace(0, 10, 100)
-x = torch.linspace(0, 10, 100)
-
+t = torch.arange(0, 100, 1, dtype=torch.float)
+x = torch.arange(0, 100, 1, dtype=torch.float)
 T, X = torch.meshgrid(t, x, indexing="ij")
 tx = torch.stack((T.flatten(), X.flatten()), dim=1).requires_grad_(True)
 
@@ -51,6 +39,6 @@ for ep in range(epochs):
     loss.backward()
     optimizer.step()
     if (ep + 1) % 50 == 0:
-        print(f"residual: {res}")
         print(f"Epoch [{ep + 1}/{epochs}], Loss: {loss.item()}")
 
+torch.save(u.state_dict(), './wave/classic_wave.pt')
