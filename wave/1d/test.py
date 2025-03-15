@@ -2,10 +2,8 @@ import torch
 from wave.u import U
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-
-
 u = U()
-u.load_state_dict(torch.load('/Users/yme/Code/Phys/wave/classic_wave.pt', weights_only=True))
+u.load_state_dict(torch.load('/wave/1d/classic_wave.pt', weights_only=True))
 
 t = torch.arange(0, 100, 1, dtype=torch.float)
 x = torch.arange(0, 100, 1, dtype=torch.float)
@@ -30,7 +28,7 @@ def update(i):
 
 ani = animation.FuncAnimation(fig, update, frames=T.shape[0])
 
-ani.save('./wave.mp4')
+ani.save('./classic_wave.mp4')
 
 plt.show()
 

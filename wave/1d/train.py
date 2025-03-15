@@ -3,9 +3,7 @@ import torch.autograd
 from torch import nn, vmap
 from torch.func import jacrev, hessian
 import torch.optim as optim
-
 from wave.u import U
-
 
 def compute_residual(u, tx):
     hess = vmap(hessian(u))(tx)
