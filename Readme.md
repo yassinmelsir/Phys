@@ -8,5 +8,5 @@
 
 ## Discovering PDEs
 1. Learn Effective Hamiltonian of Quantum System
-2. Quantum Transport Equations from Many-Body Systems
-3. Learn tensor networks for quantum lattice models
+2. Finding Many-Body Ground States of Quantum Lattices
+2. Finding Quantum Transport Equations from Many-Body Systems
