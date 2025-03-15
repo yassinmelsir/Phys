@@ -14,4 +14,18 @@ y = u(tx).detach()
 Y = y.reshape(T.shape)
 txy = torch.cat((tx, y.unsqueeze(1)), dim=1)
 
-breakpoint()
+fig, ax = plt.subplots()
+line,  = ax.plot(X[0], Y[0])
+
+ax.set(xlim=[X.min(), X.max()], ylim=[y.min(), y.max()])
+
+def update(i):
+    line.set_data(X[0], Y[i])
+    return line,
+
+ani = animation.FuncAnimation(fig, update, frames=T.shape[0])
+
+ani.save('/Users/yme/Code/Phys/wave/1d/cwave_1d.mp4')
+
+plt.show()
+

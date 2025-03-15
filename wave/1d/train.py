@@ -1,9 +1,11 @@
+import numpy as np
 import torch
 import torch.autograd
 from torch import nn, vmap
 from torch.func import jacrev, hessian
 import torch.optim as optim
-from wave.u import U
+from u_1d import U_1d
+
 
 def compute_residual(u, tx):
     hess = vmap(hessian(u))(tx)
@@ -20,7 +22,7 @@ x = torch.arange(0, 100, 1, dtype=torch.float)
 T, X = torch.meshgrid(t, x, indexing="ij")
 tx = torch.stack((T.flatten(), X.flatten()), dim=1).requires_grad_(True)
 
-u = U()
+u = U_1d()
 crit = nn.MSELoss()
 
 optimizer = optim.Adam(u.parameters())
@@ -39,4 +41,4 @@ for ep in range(epochs):
     if (ep + 1) % 50 == 0:
         print(f"Epoch [{ep + 1}/{epochs}], Loss: {loss.item()}")
 
-torch.save(u.state_dict(), './wave/classic_wave.pt')
+torch.save(u.state_dict(), './cwave_1d.pt')

@@ -6,37 +6,29 @@ from helpers import generate_2d_coords
 
 u = U_2d()
 
-u.load_state_dict(torch.load('./classic_wave.pt', weights_only=True))
+u.load_state_dict(torch.load('/Users/yme/Code/Phys/wave/2d/cwave_2d.pt', weights_only=True))
 
 txy, T, X, Y = generate_2d_coords()
 
-xo = txy[txy[:, 0] == 0][:, 1].detach()
-yo = txy[txy[:, 0] == 0][:, 2].detach()
-
 z = u(txy).detach()
-zo = z[txy[:, 0] == 0].detach()
+Z = z.reshape(T.shape)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-surf = ax.plot_trisurf(xo, yo, zo, cmap="viridis")
+surf = ax.plot_surface(X[0], Y[0], Z[0], cmap="viridis")
 
-ax.set(xlim=[X.min(), X.max()], ylim=[Y.min(), Y.max()], zlim=[z.min(), z.max()])
+ax.set(xlim=[X.min(), X.max()], ylim=[Y.min(), Y.max()], zlim=[Z.min(), Z.max()])
 
 def update(i):
-    xi = txy[txy[:, 0] == i][:, 1].detach()
-    yi = txy[txy[:, 0] == i][:, 2].detach()
-    zi = z[txy[:, 0] == i].detach()
-
-    ax.plot_trisurf(xi, yi, zi, cmap="viridis")
-
+    ax.plot_surface(X[i], Y[i], Z[i], cmap="viridis")
     print(f"Rendering frame {i}/{T.shape[0]}")
 
     return ax,
 
-ani = animation.FuncAnimation(fig, update, frames=T.shape[0])
+ani = animation.FuncAnimation(fig, update, frames=100, blit=False)
 
-ani.save('./classic_wave.mp4')
+ani.save('/Users/yme/Code/Phys/wave/2d/cwave_2d.mp4')
 
 plt.show()
 
