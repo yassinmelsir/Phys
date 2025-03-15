@@ -17,8 +17,8 @@ def compute_residual(u, tx):
 
     return residual
 
-t = torch.arange(0, 100, 1, dtype=torch.float)
-x = torch.arange(0, 100, 1, dtype=torch.float)
+t = torch.linspace(0, 1, 100, dtype=torch.float)
+x = torch.linspace(0, 1, 100, dtype=torch.float)
 T, X = torch.meshgrid(t, x, indexing="ij")
 tx = torch.stack((T.flatten(), X.flatten()), dim=1).requires_grad_(True)
 
@@ -28,13 +28,23 @@ crit = nn.MSELoss()
 optimizer = optim.Adam(u.parameters())
 epochs = 1000
 
+g = 0
+L = 1
+
 for ep in range(epochs):
     optimizer.zero_grad()
 
     res = compute_residual(u, tx)
+    ut_o = u(tx[tx[:, 0] == 0])
+    ux_o =  u(tx[tx[:, 1] == 0])
+    ux_L = u(tx[tx[:, 1] == L])
+
+    l_bc = torch.mean(ux_o)**2 + torch.mean(ux_L)**2
+    l_ic = torch.mean((ut_o - g)**2)
+    l_res = torch.mean(res**2)
 
 
-    loss = torch.mean(res**2)
+    loss = l_res + l_ic + l_bc
 
     loss.backward()
     optimizer.step()
